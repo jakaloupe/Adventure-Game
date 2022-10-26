@@ -5,10 +5,6 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class Main {
-    static Random rand = new Random();
-
-    // Obtain a number between [0 - 49].
-    static int rng = rand.nextInt(2)+1;
     static int magicBall = 0;
     static int greenPill = 0;
     static int spellState = 0;
@@ -18,11 +14,18 @@ public class Main {
     static Scanner userInput = new Scanner(System.in);
 
     public static void main(String[] args) {
-
         startMenu();
+
+
+        if (spellState >= 10){
+            dead();
+        }
     }
     public static void startMenu() {
-        System.out.println("Welcome to the adventure game, press 1 to Start, 2 to review Instructions, 3 to exit");
+        System.out.println("Welcome to the adventure game");
+        System.out.println("1: Start Game");
+        System.out.println("2: Instructions");
+        System.out.println("3: Exit Program");
         int input1 = userInput.nextInt();
         switch (input1) {
             case 1:
@@ -31,6 +34,9 @@ public class Main {
                 break;
             case 2:
                 //instructions();
+                break;
+            case 3:
+                System.exit(0);
         }
     }
 
@@ -39,10 +45,9 @@ public class Main {
         System.out.println("You wake up, you feel like you've been asleep for centuries. You look around and notice your surroundings arent as familiar as you thought.");
         System.out.println("You look out the window to a clear blue sky and notice that you are in a castle. You feel nauseous");
         inBedroom();
-        //boolean inorder to determine if user has left room
-
     }
     public static void inBedroom(){
+        //boolean inorder to determine if user has left room
         boolean inRoom = true;
         while (inRoom) {
             // gives user the options to leave room, explore room or to use the washroom
@@ -65,11 +70,13 @@ public class Main {
             }
         }
     }
-
     public static void hallway() {
         boolean inHall = true;
         System.out.println("You are in the hallway, paintings are hanged across the hallway");
         System.out.println("While walking down the hallway you see a tilted painting, would you like to fix it? 1 to fix it, 2 to leave it");
+        Random rand = new Random();
+        // Obtain a number between [0 - 49].
+        int rng = rand.nextInt(2)+1;
         int hChoice = userInput.nextInt();
         if (hChoice == 1 && rng == 1){
             fell = true;
@@ -98,17 +105,14 @@ public class Main {
             }
         }
     }
-
     public static void leftHall(){
 
         System.out.println("left hall");
     }
-
     public static void rightHall(){
 
         System.out.println("right hall");
     }
-
     public static void exploreRoom() {
         System.out.println("While exploring the room you see a bedside table with a drawer, Press 1 to open drawer or 2 to leave it");
         int rChoice = userInput.nextInt();
@@ -131,29 +135,36 @@ public class Main {
         boolean inWash = true;
         while (inWash) {
             System.out.println("---------------------------------------------------------------------------------------------------");
-            System.out.println("What would you like to do? 1 to relieve yourself, 2 to wash your face, 3 to open mirror cabinet, or 4 to leave.");
+            System.out.println("What would you like to do? ");
+            System.out.println("1: relieve yourself");
+            System.out.println("2: wash your face");
+            System.out.println("3: open mirror cabinet");
+            System.out.println("4: leave");
             int wChoice = userInput.nextInt();
-            if (wChoice == 1) {
-                System.out.println("You relieved yourself, you feel refreshed");
+
+            switch (wChoice) {
+                case 1:
+                    System.out.println("You relieved yourself, you feel refreshed");
+                    break;
+                case 2:
+                    System.out.println("Wow! you washed your face. you are refreshed");
+                    drownState++;
+                    break;
+
+                case 3:
+                    System.out.println("You have opened the mirror cabinet");
+                    openCab();
+                    break;
+
+                case 4:
+                    inWash = false;
+                    spell();
             }
-            else if (wChoice == 2){
-                System.out.println("Wow! you washed your face. you are refreshed");
-                drownState++;
-            }
-            else if (wChoice == 3){
-                System.out.println("You have opened the mirror cabinet");
-                openCab();
-            }
-            else if (wChoice == 4){
-                inWash = false;
-                spell();
-            }
-            if (drownState == 5){
+
+            if (drownState >= 5){
                 dead();
             }
-            if (spellState == 10){
-                dead();
-            }
+
         }
     }
     public static void openCab(){
@@ -170,7 +181,6 @@ public class Main {
         }
     }
 
-
     // Spell
     public static void spell(){
         spellState += 1;
@@ -183,6 +193,7 @@ public class Main {
     }
     public static void dead(){
         System.out.println("You died");
+
         if (drownState == 5){
             System.out.println("You drowned by washing your face too many times, your small nose sucked it all up. :(");
         }

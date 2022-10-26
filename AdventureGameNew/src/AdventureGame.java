@@ -1,24 +1,28 @@
+package AdventureGameNew.src;
+
+import java.security.spec.RSAOtherPrimeInfo;
+import java.sql.SQLOutput;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Random;
 
 public class AdventureGame {
-        static Random rand = new Random();
 
-        // Obtain a number between [0 - 49].
-        static int rng = rand.nextInt(2)+1;
-        static int magicBall = 0;
-        static int greenPill = 0;
-        static int spellState = 0;
-        static int drownState = 0;
-        static boolean fell = false;
-
-        static Scanner userInput = new Scanner(System.in);
+        Person person = new Person();
+        int magicBall = 0;
+        int greenPill = 0;
+        boolean fell = false;
+        boolean inRoom = true;
+        Scanner userInput = new Scanner(System.in);
 
         public AdventureGame() {
             startMenu();
         }
-        void startMenu() {
-            System.out.println("Welcome to the adventure game, press 1 to Start, 2 to review Instructions, 3 to exit");
+        public void startMenu() {
+            System.out.println("Welcome to the adventure game");
+            System.out.println("1: Start Game");
+            System.out.println("2: Instructions");
+            System.out.println("3: Exit Program");
             int input1 = userInput.nextInt();
             switch (input1) {
                 case 1:
@@ -26,7 +30,10 @@ public class AdventureGame {
                     gameStart();
                     break;
                 case 2:
-                    //instructions();
+                    instructions();
+                    break;
+                case 3:
+                    System.exit(0);
             }
         }
 
@@ -38,25 +45,38 @@ public class AdventureGame {
         }
         public void inBedroom(){
             //boolean inorder to determine if user has left room
-            boolean inRoom = true;
             while (inRoom) {
                 // gives user the options to leave room, explore room or to use the washroom
                 System.out.println("---------------------------------------------------------------------------------------------------");
                 System.out.println("You are in the bedroom");
-                System.out.println("What would you like to do? Press 1 to leave your room, 2 to explore the room, 3 to use the washroom");
-                int rInput = userInput.nextInt();
-                if (rInput == 1) {
-                    inRoom = false;
-                    hallway();
-                }
-                //if user chooses "2"
-                if (rInput == 2) {
-                    exploreRoom();
-                }
+                System.out.println("What would you like to do?");
+                System.out.println("1: Leave room");
+                System.out.println("2: Explore room");
+                System.out.println("3: Use Washroom");
+                System.out.println("4: Inventory");
+                try{
+                    userInput.nextLine();
+                    int rInput = userInput.nextInt();
+                    switch (rInput){
+                        case 1:
+                            inRoom = false;
+                            hallway();
+                            break;
 
-                if (rInput == 3) {
-                    //lore: someone has put a spell on user. spellState increases as time passes
-                    exploreWash();
+                        case 2:
+                            exploreRoom();
+                            break;
+
+                        case 3:
+                            exploreWash();
+                            break;
+
+                        case 4:
+                            inventory();
+                    }
+                }
+                catch (InputMismatchException exception){
+                    System.out.println("Invalid Input!");
                 }
             }
         }
@@ -64,32 +84,41 @@ public class AdventureGame {
         public void hallway() {
             boolean inHall = true;
             System.out.println("You are in the hallway, paintings are hanged across the hallway");
-            System.out.println("While walking down the hallway you see a tilted painting, would you like to fix it? 1 to fix it, 2 to leave it");
+            System.out.println("While walking down the hallway you notice a slightly tilted painting, it kind of bothers you, but it isn't a big deal");
+            System.out.println("1: Fix the painting for satisfaction");
+            System.out.println("2: Leave it");
             int hChoice = userInput.nextInt();
-            if (hChoice == 1 && rng == 1){
+            if (hChoice == 1 && rng() == 1){
                 fell = true;
                 dead();
                 inHall = false;
             }
-            else if (hChoice == 1 && rng == 2){
+            else if (hChoice == 1 && rng() == 2){
                 System.out.println("You fixed the painting ");
             }
             while (inHall){
-                System.out.println("You are in the hallway and you come between a split in the hallway, which way would you like to go? 1 for Left or 2 for Right");
-                int hallChoice = userInput.nextInt();
-                switch (hallChoice){
-                    case 1:
-                        leftHall();
-                        inHall = false;
-                        break;
 
-                    case 2:
-                        rightHall();
-                        inHall = false;
-                        break;
-
-                    default:
-                        break;
+                try {
+                    System.out.println("You are in the hallway and you come between a split in the hallway, which way would you like to go?");
+                    System.out.println("1: Left");
+                    System.out.println("2: Right");
+                    userInput.nextLine();
+                    int hallChoice = userInput.nextInt();
+                    switch (hallChoice) {
+                        case 1 -> {
+                            leftHall();
+                            inHall = false;
+                        }
+                        case 2 -> {
+                            rightHall();
+                            inHall = false;
+                        }
+                        default -> {
+                        }
+                    }
+                }
+                catch (InputMismatchException exception){
+                    System.out.println("Invalid input!");
                 }
             }
         }
@@ -105,11 +134,15 @@ public class AdventureGame {
         }
 
         public void exploreRoom() {
-            System.out.println("While exploring the room you see a bedside table with a drawer, Press 1 to open drawer or 2 to leave it");
+            System.out.println("While exploring the room you see a bedside table with a drawer");
+            System.out.println("1: Open Drawer");
+            System.out.println("2: Leave it");
             int rChoice = userInput.nextInt();
             // if user has chosen to open drawer without a 8ball then method runs
             if (rChoice == 1 && magicBall != 1) {
-                System.out.println("While exploring the room, you find a magic 8 ball! Press 1 to pick it up or 2 to leave it");
+                System.out.println("While exploring the room, you find a magic 8 ball!");
+                System.out.println("1: Pick it up");
+                System.out.println("2: Leave it");
                 int itemChoice = userInput.nextInt();
                 // if user chooses to pick up item, method runs otherwise it runs the while loop
                 if (itemChoice == 1 && magicBall == 0) {
@@ -126,34 +159,48 @@ public class AdventureGame {
             boolean inWash = true;
             while (inWash) {
                 System.out.println("---------------------------------------------------------------------------------------------------");
-                System.out.println("What would you like to do? 1 to relieve yourself, 2 to wash your face, 3 to open mirror cabinet, or 4 to leave.");
-                int wChoice = userInput.nextInt();
-                if (wChoice == 1) {
-                    System.out.println("You relieved yourself, you feel refreshed");
+                System.out.println("What would you like to do? ");
+                System.out.println("1: Relieve yourself");
+                System.out.println("2: Wash your face");
+                System.out.println("3: Open mirror cabinet");
+                System.out.println("4: Leave");
+
+                try {
+                    int wChoice = userInput.nextInt();
+                    switch (wChoice) {
+                        case 1:
+                            System.out.println("You relieved yourself, you feel refreshed");
+                            break;
+                        case 2:
+                            System.out.println("Wow! you washed your face. you are refreshed");
+                            person.setDrownState(person.getDrownState()+1);
+                            break;
+
+                        case 3:
+                            System.out.println("You have opened the mirror cabinet");
+                            openCab();
+                            break;
+
+                        case 4:
+                            inWash = false;
+                            spell();
+                    }
                 }
-                else if (wChoice == 2){
-                    System.out.println("Wow! you washed your face. you are refreshed");
-                    drownState++;
+                catch (InputMismatchException exception){
+                    System.out.println("Invalid Input!");
                 }
-                else if (wChoice == 3){
-                    System.out.println("You have opened the mirror cabinet");
-                    openCab();
-                }
-                else if (wChoice == 4){
+                if (person.getDrownState() >= 5){
+                    dead();
                     inWash = false;
-                    spell();
-                }
-                if (drownState == 5){
-                    dead();
-                }
-                if (spellState == 10){
-                    dead();
+                    inRoom = false;
                 }
             }
         }
         public void openCab(){
             if (greenPill != 1){
                 System.out.println("You have found a green pill! Press 1 to pick it up or 2 to leave it.");
+                System.out.println("1: Pick it up");
+                System.out.println("2: Leave it");
                 int itemChoice2 = userInput.nextInt();
                 if (itemChoice2 == 1) {
                     greenPill = 1;
@@ -165,32 +212,56 @@ public class AdventureGame {
             }
         }
 
+        public void inventory(){
+            System.out.println("<strong>Inventory</strong>");
+        }
+
+        public double rng(){
+            Random rand = new Random();
+            // Obtains a number between [0 - 50].
+            int rng = rand.nextInt(2)+1;
+            return rng;
+        }
 
         // Spell
         public void spell(){
-            spellState += 1;
-            if (spellState == 1){
+            person.setSpellState(person.getSpellState()+1);
+            if (person.getSpellState() == 1){
                 System.out.println("Your head spins and you are starting to feel nauseous");
             }
-            else if (spellState == 2){
+            else if (person.getSpellState() == 2){
                 System.out.println("Your feet become heavier, you are starting to become confused, your head spins faster");
+            }
+            else if (person.getSpellState() == 3){
+                System.out.println("Your eyes feel heavy, almost sleepy like.");
+            }
+            else if (person.getSpellState() == 4){
+                System.out.println("You feel slow, you feel like you can barely move, but you keep pushing on.");
+            }
+            else if (person.getSpellState() == 5){
+                dead();
             }
         }
         public void dead(){
             System.out.println("You died");
-            if (drownState == 5){
+            if (person.getDrownState() == 5){
                 System.out.println("You drowned by washing your face too many times, your small nose sucked it all up. :(");
             }
-            if (spellState == 10){
+            if (person.getSpellState() == 5){
                 System.out.println("The spell engulfed your soul, use Green Pills to reduce the spell, allowing you to live longer.");
             }
             if (fell){
                 System.out.println("The floorboard below you opened, revealing metal spikes which impaled you");
             }
-            drownState = 0;
+            person.setDrownState(0);
             magicBall = 0;
             greenPill = 0;
-            spellState = 0;
+            person.setSpellState(0);
             startMenu();
         }
+
+        public void instructions(){
+            System.out.println("Idk");
+        }
     }
+
